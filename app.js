@@ -18,9 +18,10 @@ function app(){
   var slidecount = 0;
   var loadCount = 1;
   var slidechanged = true;
-  var slideframecount = 0;
+  var currentslideframecount = 0;
   var slidetransitionframes = 0;
   var transitionstepcount = 0;
+  var transitionoffset = 1;
   var fadeout = 100;
   var fadein = 0;
   var framecount = 0;
@@ -38,8 +39,8 @@ function app(){
     slideshow.timeline = getTimeline(showXML);
     slideshow.imgs = getImages(showXML);
     //add more settings to slideshow object
-    slideshow.transition = "crossfade";
-    slideshow.transsteps = 200; //How many states the transition goes through total for both slides
+    slideshow.transition = "crossfade";       //if transitions are added these settings should be combined into one object as part of a transition array
+    slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of two slide's frames used by the transition
     slideshow.timeline.pos = {"x": 0, "y": 0}
     slideshow.framerate = 40;
@@ -121,53 +122,62 @@ function app(){
   }
 
   function slidecontrol(){
-
     if(slidechanged){
-      slideframecount = Math.round(slideshow.imgs[currentslide].endTime/slideshow.framerate);
+      var slideframecount = Math.round(slideshow.imgs[currentslide].endTime/slideshow.framerate);
+      currentslideframecount = slideframecount;
       setnextslide();
-      var nextslideframecount = Math.round(nextslide.endTime/slideshow.framerate);
-      //slidetransitionframes is the number of frames to be used by each slide involved in a transition
+      var nextslideframecount = Math.round(slideshow.imgs[nextslide].endTime/slideshow.framerate);
+      //slidetransitionframes is half the number of frames to be used for a transition or frames per slide used
       slidetransitionframes = Math.round(((slideframecount + nextslideframecount) * slideshow.transratio)/2);
       slidechanged = false;
     }
-    if(slideframecount <= slidetransitionframes){
+    if(currentslideframecount <= slidetransitionframes || (currentslideframecount > (currentslideframecount - slidetransitionframes))){
       drawslide(transitions());
     }
     else{
       drawslide(currentslide);
     }
-    slideframecount--;
-    if(slideframecount < 1){
+    currentslideframecount--;
+    if(currentslideframecount < 1){
       slidechanged = true;
+      transitionstepcount = 0;
       currentslide = nextslide;
     }
   }
 
   function transitions(){
-    switch (slideshow.transition){
-      //draw current slide with reduced alpha, then draw next slide with increased alpha
-      case "crossfade":
-      console.log("transitions");
-        console.log("framecount:"+framecount+" slidecount:"+slidecount+" currentslide:"+currentslide+" transitionstepcount:"+transitionstepcount);
-        transitionstepcount++;
-        if(transitionstepcount % 2 ){
-          fadein++;
-          if(fadein > 100 ){
-            fadein = 100;
+    var transitionoffset = slideshow.transsteps / (slidetransitionframes * 2) ;
+    transitionstepcount++;
+      switch (slideshow.transition) {
+        //draw current slide with reduced alpha, then draw next slide with increased alpha
+        case "crossfade":
+          if(transitionstepcount === 1){
+            fadein = 0; fadeout = 100;
           }
-          stage.globalAlpha = fadein * .01;
-          return nextslide;
-        }
-        else{
-          fadeout--;
-          if(fadeout < 0){
-            fadeout = 0;
+          if (transitionstepcount % 100) {
+            fadein = fadein + transitionoffset;
+            if (fadein > 100) {
+              stage.globalAlpha = 1
+            }
+            else {
+              stage.globalAlpha = fadein * .01
+            }
+            return nextslide;
           }
-          stage.globalAlpha = fadeout * .01;
-          return currentslide;
-        }
-        break;
-    }
+          else {
+            fadeout = fadeout - transitionoffset;
+            if (fadeout < 0) {
+              stage.globalAlpha = 0
+            }
+            else {
+              stage.globalAlpha = fadeout * .2;
+            }
+            return currentslide;
+          }
+
+          break;
+      }
+
   }
 
   function setnextslide(){
@@ -177,7 +187,6 @@ function app(){
     else{
       nextslide=currentslide + 1;
     }
-    console.log("nextslide:"+nextslide);
   }
 
 }
