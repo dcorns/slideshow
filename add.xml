@@ -1,0 +1,9 @@
+<ad size="350x250" background="#000000">
+    <timeline duration="10000">
+        <image url="http://swf.mixpo.com/comp/pubdom/96b63a57-1414-4e5a-a34d-d43eab58399c/JPG320.jpg" startTime="0" endTime="2000" x="0" y="0" width="1" height="1"/>
+        <image url="http://swf.mixpo.com/comp/pubdom/66246512-b1bb-4d16-b61e-df16371cd540/JPG320.jpg" startTime="2000" endTime="2000" x="0" y="0" width="1" height="1"/>
+        <image url="http://swf.mixpo.com/comp/pubdom/0a38ab71-7d2e-423c-8f6b-8c2746233bad/JPG320.jpg" startTime="4000" endTime="2000" x="0" y="0" width="1" height="1"/>
+        <image url="http://swf.mixpo.com/comp/pubdom/34ce2621-cd7e-4e8b-a0cb-63dbb6e413fb/JPG320.jpg" startTime="6000" endTime="2000" x="0" y="0" width="1" height="1"/>
+        <image url="http://swf.mixpo.com/comp/pubdom/fc04c15d-14d6-4cd1-a3d5-8fb5abfa8ea5/JPG320.jpg" startTime="8000" endTime="2000" x="0" y="0" width="1" height="1"/>
+    </timeline>
+</ad>
