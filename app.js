@@ -18,7 +18,7 @@ function app(){
   var slidecount = 0;
   var framecount = 0;
   var seconds = 0;
-  var minutes = 0
+  var minutes = 0;
   var slideseconds = 0;
   var slideminutes = 0;
   var secondsID = 0;
@@ -50,7 +50,7 @@ function app(){
     slideshow.transition = "crossfade";       //if transitions are added these settings should be combined into one object as part of a transition array
     slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of two slide's frames used by the transition
-    slideshow.timeline.pos = {"x": 0, "y": 0}
+    slideshow.timeline.pos = {"x": 0, "y": 0};
     slideshow.framerate = 40; //frames per slide (not really a frame rate
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
     slideshow.loop = false;
@@ -182,17 +182,17 @@ function app(){
           if (transitionstepcount % 100) {
             fadein = fadein + transitionoffset;
             if (fadein > 100) {
-              stage.globalAlpha = 1
+              stage.globalAlpha = 1;
             }
             else {
-              stage.globalAlpha = fadein * .01
+              stage.globalAlpha = fadein * .01;
             }
             return nextslide;
           }
           else {
             fadeout = fadeout - transitionoffset;
             if (fadeout < 0) {
-              stage.globalAlpha = 0
+              stage.globalAlpha = 0;
             }
             else {
               stage.globalAlpha = fadeout * .2;
