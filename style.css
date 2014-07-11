@@ -1,7 +1,97 @@
 
 .container{
-background-color: white;
+    background-color: darkslategrey;
+    width: 350px;
+    height: 250px;
+}
+.delim{
+    position: absolute;
+    top: 239px;
+    left: 307px;
+    color: white;
+    background-color: antiquewhite;
+}
 
+.slidetimer1{
+    position: absolute;
+    top: 239px;
+    left: 271px;
+    color: lawngreen;
+    background-color: black;
+}
+
+.slidetimer2{
+    position: absolute;
+    top: 239px;
+    left: 290px;
+    color: lawngreen;
+    background-color: black;
+}
+
+.showtimer1{
+    position: absolute;
+    top: 239px;
+    left: 310px;
+    color: greenyellow;
+    background-color: black;
+}
+
+.showtimer2{
+    position: absolute;
+    top: 239px;
+    left: 328px;
+    color: greenyellow;
+    background-color: black;
+}
+
+.tdel1{
+    position: absolute;
+    top: 239px;
+    left: 326px;
+    color: greenyellow;
+    background-color: black;
+}
+
+.tdel2{
+    position: absolute;
+    top: 239px;
+    left: 287px;
+    color: greenyellow;
+    background-color: black;
+}
+
+
+.play{
+    position: absolute;
+    height: 10px;
+    width: 40px;
+    top: 247px;
+    left: 8px;
+    border-color: darkgreen;
+    background-color: green;
+    color: black;
+}
+
+.stop{
+    position: absolute;
+    height: 10px;
+    width: 40px;
+    top: 247px;
+    left: 86px;
+    border-color: darkred;
+    background-color: red;
+    color: black;
+}
+
+.pause{
+    height: 10px;
+    width: 40px;
+    position: absolute;
+    top: 247px;
+    left: 48px;
+    border-color: goldenrod;
+    background-color: yellow;
+    color: black;
 }
 
 .crossfade{

@@ -56,8 +56,8 @@ function app(){
   function getAd(xmldoc) {
     var adver = xmldoc.getElementsByTagName("ad");
     var asize = adver[0].getAttribute("size");
-    var ysize = asize.substr(0, asize.indexOf("x"));
-    var xsize = asize.substr(asize.indexOf('x') + 1);
+    var xsize = asize.substr(0, asize.indexOf("x"));
+    var ysize = asize.substr(asize.indexOf('x') + 1);
     var abackground = adver[0].getAttribute("background");
     return {"background": abackground, "size": {"x": xsize, "y": ysize}};
   }
@@ -87,6 +87,8 @@ function app(){
   function buildShow() {
     canvas.width = slideshow.ad.size.x;
     canvas.height = slideshow.ad.size.y;
+    stage.fillStyle = slideshow.ad.background;
+    stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
     for (var c = 0; c < slideshow.imgs.length; c++) {
       slideArray[c] = new Image();
       slideArray[c].src = slideshow.imgs[c].url;
@@ -102,21 +104,20 @@ function app(){
     }
     loadCount++;
   }
-
+//added 14 to the x provided by the the xml to center the images since they are slightly smaller than the canvas.
   function playshow() {
-    stage.drawImage(slideArray[currentslide], 0, 0, 300, 250);
+    stage.drawImage(slideArray[currentslide], slideArray[currentslide].x + 14, slideArray[currentslide].y,  slideArray[currentslide].width,slideArray[currentslide].height);
     timerID = setInterval(drawframe, slideshow.framerate);
   }
 
   function drawslide(sliderank) {
-    stage.drawImage(slideArray[sliderank], 0, 0, 300, 250);
+    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x + 14, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
   }
 
   function drawframe(){
-    stage.fillStyle = slideshow.ad.background;
-    stage.fillRect(0, 0, slideshow.ad.size.y, slideshow.ad.size.x);
     slidecontrol();
     framecount++;
+    console.log(framecount);
     if(framecount > slideshow.totalframes && (!(slideshow.loop))){
       clearInterval(timerID);
     }
@@ -217,14 +218,18 @@ function app(){
     makePauseBtn();
     makeStopBtn();
     makePlayBtn();
-    addElement("container", makeLabel("lblshowtime","showtime","00"));
-    addElement("delim", makeLabel("lbldelim","delim","|"));
-    addElement("container", makeLabel("lblslidetime","slidetime","00"));
+    addElement("main", makeLabel("lblshowtimer1","showtimer1","00"));
+    addElement("main", makeLabel("lblshowtimer2","showtimer2","00"));
+    addElement("main", makeLabel("lbldelim","delim","|"));
+    addElement("main", makeLabel("lblslidetimer1","slidetimer1","00"));
+    addElement("main", makeLabel("lblslidetimer2","slidetimer2","00"));
+    addElement("main", makeLabel("lblslidetimerdelim","tdel1",":"));
+    addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
 
   }
 
   function makePauseBtn(){
-    var btnpause = makeButton("btnpause","pause", "Pause", function (){
+    var btnpause = makeButton("btnpause","pause", "", function (){
       if(!(stopped)) {
         if (paused) {
           paused = false;
@@ -237,24 +242,24 @@ function app(){
       }
     });
 
-    addElement("container", btnpause);
+    addElement("main", btnpause);
   }
 
   function makeStopBtn(){
-    var btnstop = makeButton("btnstop", "stop", "Stop", function (){
+    var btnstop = makeButton("btnstop", "stop", "", function (){
       if(!(stopped)) {
         stopped = true;
         clearInterval(timerID);
         stage.globalAlpha = 1;
-        stage.fillRect(0, 0, slideshow.ad.size.y, slideshow.ad.size.x);
+        stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
       }
     });
 
-    addElement("container", btnstop);
+    addElement("main", btnstop);
   }
 
   function makePlayBtn(){
-    var btnplay = makeButton("btnplay", "play", "Play", function (){
+    var btnplay = makeButton("btnplay", "play", "", function (){
       if(stopped) {
         stopped = false;
         paused = false;
@@ -276,11 +281,11 @@ function app(){
       }
     });
 
-    addElement("container", btnplay);
+    addElement("main", btnplay);
   }
 
   function addElement(pelem, elemtoadd){
-    var elem = document.getElementById("main");
+    var elem = document.getElementById(pelem);
     elem.appendChild(elemtoadd);
   }
 
