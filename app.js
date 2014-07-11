@@ -53,7 +53,7 @@ function app(){
     slideshow.timeline.pos = {"x": 0, "y": 0}
     slideshow.framerate = 40; //frames per slide (not really a frame rate
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
-    slideshow.loop = true;
+    slideshow.loop = false;
 //************************************************Slide Show Calls******************************************************
     buildShow();
     makeElements();
@@ -133,10 +133,12 @@ function app(){
         clearInterval(timerID);
         stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
         stopped = true;
+        clearInterval(timerID);
         clearInterval(secondsID);
-        seconds = 0;
         resetTimeline();
       }
+      resetTimeline();
+      //secondsID = setInterval(incrementTimer, 1000);
     }
     slidecontrol();
   }

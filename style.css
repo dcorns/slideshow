@@ -94,57 +94,12 @@
     color: black;
 }
 
-.crossfade{
-    opacity: 0;
+.loop{
+    background-color: cadetblue;
+    color:darkblue;
 }
 
-.solid{
-    opacity: 100;
-}
-
-.slidetimer{
-    float:right;
-}
-
-.showtimer{
-    float:right;
-}
-
-.op0{
-    opacity: 0;
-}
-
-.op1{
-    opacity: .1;
-}
-.op2{
-    opacity: .2;
-}
-.op3{
-    opacity: .3;
-}
-.op4{
-    opacity: .4;
-}
-.op5{
-    opacity: .5;
-}
-.op6{
-    opacity: .6;
-}
-.op7{
-    opacity: .7;
-}
-.op8{
-    opacity: .8;
-}
-.op9{
-    opacity: .9;
-}
-.op10{
-    opacity: 1;
-}
-
-.pauseclicked{
-    background-color: yellow;
+.loopon{
+    background-color: blue;
+    color:deepskyblue;
 }
