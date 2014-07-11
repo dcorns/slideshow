@@ -1,8 +1,8 @@
 /**
  * Created by dcorns on 7/8/14.
  */
-var timerID = 0;
-var paused = false;
+
+
 window.addEventListener("load",windowLoaded(),false);
 
 function windowLoaded() {
@@ -27,6 +27,9 @@ function app(){
   var framecount = 0;
   var slidetime = 0;
   var showtime = 0;
+  var timerID = 0;
+  var paused = false;
+  var stopped = false;
   pagecontrol();
 
   function pagecontrol() {
@@ -47,6 +50,7 @@ function app(){
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
     slideshow.loop = true;
     buildShow();
+    makeElements();
   }
 
   function getAd(xmldoc) {
@@ -189,27 +193,97 @@ function app(){
     }
   }
 
-}
-
-function pauseshow() {
-  if (paused) {
-    paused = false;
-    resumeshow();
-  }
-  else{
-    clearInterval(timerID);
-    paused = true;
-    var pa = document.getElementsByClassName("pause");
-    var pac = pa.getAttribute("class");
-    alert(pac);
-   // pa.classList.add("pauseclicked");
-    console.log(pa);
+  function makeButton(id, cls, txt, clk){
+    var btn = document.createElement("button");
+    btn.className = cls;
+    var txtnode = document.createTextNode(txt);
+    btn.appendChild(txtnode);
+    btn.value = txt;
+    btn.onclick = clk;
+    btn.id = id;
+    return btn;
   }
 
+  function makeLabel(id, cls, txt){
+    var lbl = document.createElement("label");
+    lbl.className = cls;
+    var txtnode = document.createTextNode(txt);
+    lbl.appendChild(txtnode);
+    lbl.id = id;
+    return lbl;
+  }
+
+  function makeElements(){
+    makePauseBtn();
+    makeStopBtn();
+    makePlayBtn();
+    makeLabel("lblshowtime","showtime","00");
+    makeLabel("lblslidetime","slidetime","00");
+
+  }
+
+  function makePauseBtn(){
+    var btnpause = makeButton("btnpause","pause", "Pause", function (){
+      if(!(stopped)) {
+        if (paused) {
+          paused = false;
+          playshow();
+        }
+        else {
+          clearInterval(timerID);
+          paused = true;
+        }
+      }
+    });
+
+    addElement("container", btnpause);
+  }
+
+  function makeStopBtn(){
+    var btnstop = makeButton("btnstop", "stop", "Stop", function (){
+      if(!(stopped)) {
+        stopped = true;
+        clearInterval(timerID);
+        stage.globalAlpha = 1;
+        stage.fillRect(0, 0, slideshow.ad.size.y, slideshow.ad.size.x);
+      }
+    });
+
+    addElement("container", btnstop);
+  }
+
+  function makePlayBtn(){
+    var btnplay = makeButton("btnplay", "play", "Play", function (){
+      if(stopped) {
+        stopped = false;
+        paused = false;
+        currentslide = 0;
+        nextslide = 0;
+        slidecount = 0;
+        slidechanged = true;
+        currentslideframecount = 0;
+        slidetransitionframes = 0;
+        transitionstepcount = 0;
+        transitionoffset = 1;
+        fadeout = 100;
+        fadein = 0;
+        framecount = 0;
+        slidetime = 0;
+        showtime = 0;
+        timerID = 0;
+        playshow();
+      }
+    });
+
+    addElement("container", btnplay);
+  }
+
+  function addElement(pelem, elemtoadd){
+    var elem = document.getElementById("main");
+    elem.appendChild(elemtoadd);
+  }
+
 }
-function resumeshow() {
-  alert('resume show called');
-}
-function stopshow() {
-  clearInterval(timerID);
-}
+
+
+
