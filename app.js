@@ -217,8 +217,9 @@ function app(){
     makePauseBtn();
     makeStopBtn();
     makePlayBtn();
-    makeLabel("lblshowtime","showtime","00");
-    makeLabel("lblslidetime","slidetime","00");
+    addElement("container", makeLabel("lblshowtime","showtime","00"));
+    addElement("delim", makeLabel("lbldelim","delim","|"));
+    addElement("container", makeLabel("lblslidetime","slidetime","00"));
 
   }
 
