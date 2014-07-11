@@ -16,6 +16,12 @@ function app(){
   var currentslide = 0;
   var nextslide = 0;
   var slidecount = 0;
+  var framecount = 0;
+  var seconds = 0;
+  var minutes = 0
+  var slideseconds = 0;
+  var slideminutes = 0;
+  var secondsID = 0;
   var loadCount = 1;
   var slidechanged = true;
   var currentslideframecount = 0;
@@ -24,14 +30,13 @@ function app(){
   var transitionoffset = 1;
   var fadeout = 100;
   var fadein = 0;
-  var framecount = 0;
   var slidetime = 0;
   var showtime = 0;
   var timerID = 0;
   var paused = false;
   var stopped = false;
   pagecontrol();
-
+//*********************************************Load Data****************************************************************
   function pagecontrol() {
     var showdata = new XMLHttpRequest();
     showdata.open("GET", "add.xml", false);
@@ -46,13 +51,14 @@ function app(){
     slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of two slide's frames used by the transition
     slideshow.timeline.pos = {"x": 0, "y": 0}
-    slideshow.framerate = 40;
+    slideshow.framerate = 40; //frames per slide (not really a frame rate
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
     slideshow.loop = true;
+//************************************************Slide Show Calls******************************************************
     buildShow();
     makeElements();
   }
-
+//************************************************Data Load Functions***************************************************
   function getAd(xmldoc) {
     var adver = xmldoc.getElementsByTagName("ad");
     var asize = adver[0].getAttribute("size");
@@ -83,7 +89,7 @@ function app(){
     }
     return result;
   }
-
+//**********************************************Setup Canvas And Images*************************************************
   function buildShow() {
     canvas.width = slideshow.ad.size.x;
     canvas.height = slideshow.ad.size.y;
@@ -96,7 +102,7 @@ function app(){
       slideArray[c].onload = imagesloaded;
     }
   }
-
+//##################################################Starting Point######################################################
   function imagesloaded() {
     if (slideArray.length === loadCount) {
       slidecount = slideArray.length;
@@ -104,28 +110,37 @@ function app(){
     }
     loadCount++;
   }
+
+//************************************************Slide Show Control and Logic******************************************
+  //First slide drawn here
 //added 14 to the x provided by the the xml to center the images since they are slightly smaller than the canvas.
+  //Needs to be factored in if common
   function playshow() {
     stage.drawImage(slideArray[currentslide], slideArray[currentslide].x + 14, slideArray[currentslide].y,  slideArray[currentslide].width,slideArray[currentslide].height);
+    secondsID = setInterval(incrementTimer, 1000);
     timerID = setInterval(drawframe, slideshow.framerate);
   }
-
+//All other slides drawn here
   function drawslide(sliderank) {
     stage.drawImage(slideArray[sliderank], slideArray[currentslide].x + 14, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
   }
-
+//Frame and drawing control
   function drawframe(){
-    slidecontrol();
     framecount++;
-    console.log(framecount);
-    if(framecount > slideshow.totalframes && (!(slideshow.loop))){
-      clearInterval(timerID);
-    }
-    else{
+    if(framecount > slideshow.totalframes){
       framecount = 0;
+      if (!(slideshow.loop)) {
+        clearInterval(timerID);
+        stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
+        stopped = true;
+        clearInterval(secondsID);
+        seconds = 0;
+        resetTimeline();
+      }
     }
+    slidecontrol();
   }
-
+//Determine when to change slides and when to call transitions
   function slidecontrol(){
     if(slidechanged){
       var slideframecount = Math.round(slideshow.imgs[currentslide].endTime/slideshow.framerate);
@@ -142,14 +157,17 @@ function app(){
     else{
       drawslide(currentslide);
     }
+    //Slide duration is a countdown
     currentslideframecount--;
     if(currentslideframecount < 1){
       slidechanged = true;
+      //reset slideseconds
+      slideseconds = 0;
       transitionstepcount = 0;
       currentslide = nextslide;
     }
   }
-
+//Structured for the addition of multiple transition choices
   function transitions(){
     var transitionoffset = slideshow.transsteps / (slidetransitionframes * 2) ;
     transitionstepcount++;
@@ -194,6 +212,7 @@ function app(){
     }
   }
 
+//****************************************************UI Elements and Logic*********************************************
   function makeButton(id, cls, txt, clk){
     var btn = document.createElement("button");
     btn.className = cls;
@@ -237,6 +256,7 @@ function app(){
         }
         else {
           clearInterval(timerID);
+          clearInterval(secondsID);
           paused = true;
         }
       }
@@ -252,6 +272,7 @@ function app(){
         clearInterval(timerID);
         stage.globalAlpha = 1;
         stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
+        resetTimeline();
       }
     });
 
@@ -273,10 +294,10 @@ function app(){
         transitionoffset = 1;
         fadeout = 100;
         fadein = 0;
-        framecount = 0;
         slidetime = 0;
         showtime = 0;
         timerID = 0;
+        framecount = 0;
         playshow();
       }
     });
@@ -287,6 +308,102 @@ function app(){
   function addElement(pelem, elemtoadd){
     var elem = document.getElementById(pelem);
     elem.appendChild(elemtoadd);
+  }
+
+//********************************************Time Line Control And UI**************************************************
+  //Note: slideseconds are reset in slidecontrol() when the slide changes
+  function incrementTimer(){
+    seconds++;
+    slideseconds++;
+    //determine minutes and seconds in preparation for timeline display
+    switch(seconds){
+      case 60:
+        minutes++;
+        seconds=0;
+        break;
+      case 10000:
+        turnOverTime("Total");
+        return;
+    }
+
+    switch(slideseconds){
+      case 60:
+        slideminutes++;
+        slideseconds = 0;
+        break;
+      case 10000:
+        turnOverTime("Slide");
+        return;
+    }
+    showSlideSeconds();
+    showShowSeconds();
+  }
+
+  function resetTimeline(){
+   resetShowTimer();
+   resetSlideTimer();
+   clearInterval(secondsID);
+  }
+
+  function showSlideSeconds(){
+    var lblsec = document.getElementById("lblslidetimer2");
+    if(slideseconds > 9){
+      lblsec.innerHTML = slideseconds.toString().substr(this.length - 2);
+    }
+    else{
+      lblsec.innerHTML = "0"+slideseconds.toString();
+    }
+    var lblmin = document.getElementById("lblslidetimer1");
+    if(slideminutes > 9){
+      lblmin.innerHTML = slideminutes.toString().substr(this.length - 2);
+    }
+    else{
+      lblmin.innerHTML = "0"+slideminutes.toString();
+    }
+  }
+
+  function showShowSeconds(){
+    var lblsec = document.getElementById("lblshowtimer2");
+    if(seconds > 9){
+      lblsec.innerHTML = seconds.toString().substr(this.length - 2);
+    }
+    else{
+      lblsec.innerHTML = "0"+seconds.toString();
+    }
+    var lblmin = document.getElementById("lblshowtimer1");
+    if(minutes > 9){
+      lblmin.innerHTML = minutes.toString().substr(this.length - 2);
+    }
+    else{
+      lblmin.innerHTML = "0"+minutes.toString();
+    }
+  }
+
+  function turnOverTime(overtime){
+    if(overtime === "Slide"){
+      resetSlideTimer();
+    }
+    else{
+      resetShowTimer();
+    }
+  }
+
+  function resetSlideTimer(){
+    var slblsec = document.getElementById("lblslidetimer2");
+    var slblmin = document.getElementById("lblslidetimer1");
+    slblsec.innerHTML = "00";
+    slblmin.innerHTML = "00";
+    slideminutes = 0;
+    slideseconds = 0;
+  }
+
+  function resetShowTimer(){
+    var tlblsec = document.getElementById("lblshowtimer2");
+    var tlblmin = document.getElementById("lblshowtimer1");
+    tlblsec.innerHTML = "00";
+    tlblmin.innerHTML = "00";
+    seconds = 0;
+    minutes = 0;
   }
 
 }
