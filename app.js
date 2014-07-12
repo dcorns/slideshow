@@ -158,7 +158,6 @@ function app(){
       currentslideframecount = slideshow.imgs[currentslide].framecount;
       setnextslide();
       var nextslideframecount = slideshow.imgs[nextslide].framecount;
-      //slidetransitionframes is half the number of frames to be used for a transition or frames per slide used
       slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.transratio));
       slidechanged = false;
       console.log("157 currenslideframecount: "+currentslideframecount);
