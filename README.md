@@ -26,7 +26,7 @@ Program Explanation:
         45 pagecontrol() is called:
             
             47 Pagecontrol function emulates an http request, puts the XML file into the slideshow object using getAd(),
-            getTimeline() and getImages(). Then it adds additional objects to slideshow that are not currently provided
+            getTimeline() and getImages() and adds additional objects to slideshow that are not currently provided
             by the data file.
             Then it calls buildshow() which sets up the canvas, sets the initial background, creates the image nodes
             and populates slideArray with them.
@@ -50,7 +50,10 @@ Program Explanation:
                 reset framecount to zero and check slideshow.loop if loop is true it will call resetTimeLine and then
                 slidecontrol. Otherwise it will stop the intervals, set stop to true, calls resetTimeLine and returns.
                 
-                .....
+                    156 slidecontrol() controls how the slides will be displayed
+                    Sets the currentframecount to the current slide's frame count, calls setnextslide() which sets
+                    nextslide to one more than currentslide or to the first slide in the show (zero). Then nextslide's
+                    framecount is loaded into nextslideframecount
         
         
            

@@ -50,20 +50,19 @@ function app(){
     showdata.open("GET", "add.xml", false);
     showdata.send();
     var showXML = showdata.responseXML;
-    //populate the slideshow object with showXML data
-    slideshow.ad = getAd(showXML);
-    slideshow.timeline = getTimeline(showXML);
-    slideshow.imgs = getImages(showXML);
-    //add more settings to slideshow object that were not included in the data file
+    //populate the slideshow object with showXML data and add other objects not currently provided by XML
     //added the transition objects for future implementation of multiple transition options
     //if transitions are added these settings should be combined into one object as part of a transition array
     slideshow.transition = "crossfade";
     slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of the slide frames to be shared by the slides used by the transition
-    slideshow.timeline.pos = {"x": 0, "y": 0}; //storing the coordinates of the time line display (will probably remove)
     slideshow.framerate = 40; //bad name it is actually the number of milliseconds between stage refreshes
+    slideshow.loop = false; //if true, the slide show will repeat until stop is selected
+    slideshow.ad = getAd(showXML);
+    slideshow.timeline = getTimeline(showXML);
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate); //total frames in the show
-    slideshow.loop = true; //if true, the slide show will repeat until stop is selected
+    slideshow.imgs = getImages(showXML);
+
 //************************************************Slide Show Calls******************************************************
     buildShow();
     makeElements();
@@ -97,6 +96,7 @@ function app(){
       result[c].y = imgs[c].getAttribute("y");
       result[c].width = imgs[c].getAttribute("width");
       result[c].height = imgs[c].getAttribute("height");
+      result[c].framecount = Math.round(result[c].endTime/slideshow.framerate);
     }
     return result;
   }
@@ -134,7 +134,7 @@ function app(){
     timerID = setInterval(drawframe, slideshow.framerate);
   }
 
-//Frame and drawing control
+//Determines when to end the show
   function drawframe(){
 // console.log("120 framecount: "+framecount);
     framecount++;
@@ -155,12 +155,11 @@ function app(){
 //Determine when to change slides and when to call transitions
   function slidecontrol(){
     if(slidechanged){
-      var slideframecount = Math.round(slideshow.imgs[currentslide].endTime/slideshow.framerate);
-      currentslideframecount = slideframecount;
+      currentslideframecount = slideshow.imgs[currentslide].framecount;
       setnextslide();
-      var nextslideframecount = Math.round(slideshow.imgs[nextslide].endTime/slideshow.framerate);
+      var nextslideframecount = slideshow.imgs[nextslide].framecount;
       //slidetransitionframes is half the number of frames to be used for a transition or frames per slide used
-      slidetransitionframes = Math.round(((slideframecount + nextslideframecount) * slideshow.transratio)/2);
+      slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.transratio));
       slidechanged = false;
       console.log("157 currenslideframecount: "+currentslideframecount);
     }
@@ -189,7 +188,7 @@ function app(){
 
 //Structured for the addition of multiple transition choices
   function transitions(){
-    var transitionoffset = slideshow.transsteps / (slidetransitionframes * 2) ;
+    var transitionoffset = slideshow.transsteps / (slidetransitionframes) ;
     transitionstepcount++;
       switch (slideshow.transition) {
         //draw current slide with reduced alpha, then draw next slide with increased alpha
