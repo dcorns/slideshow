@@ -53,7 +53,7 @@ function app(){
     slideshow.timeline.pos = {"x": 0, "y": 0};
     slideshow.framerate = 40; //frames per slide (not really a frame rate
     slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
-    slideshow.loop = false;
+    slideshow.loop = true;
 //************************************************Slide Show Calls******************************************************
     buildShow();
     makeElements();
@@ -126,6 +126,7 @@ function app(){
   }
 //Frame and drawing control
   function drawframe(){
+// console.log("120 framecount: "+framecount);
     framecount++;
     if(framecount > slideshow.totalframes){
       framecount = 0;
@@ -138,7 +139,8 @@ function app(){
         resetTimeline();
       }
       resetTimeline();
-      //secondsID = setInterval(incrementTimer, 1000);
+      resetShowCounters();
+      playshow();
     }
     slidecontrol();
   }
@@ -152,6 +154,7 @@ function app(){
       //slidetransitionframes is half the number of frames to be used for a transition or frames per slide used
       slidetransitionframes = Math.round(((slideframecount + nextslideframecount) * slideshow.transratio)/2);
       slidechanged = false;
+      console.log("157 currenslideframecount: "+currentslideframecount);
     }
     if(currentslideframecount <= slidetransitionframes || (currentslideframecount > (currentslideframecount - slidetransitionframes))){
       drawslide(transitions());
@@ -160,6 +163,7 @@ function app(){
       drawslide(currentslide);
     }
     //Slide duration is a countdown
+//    console.log("164 currentslideframecount:"+currentslideframecount);
     currentslideframecount--;
     if(currentslideframecount < 1){
       slidechanged = true;
@@ -286,20 +290,7 @@ function app(){
       if(stopped) {
         stopped = false;
         paused = false;
-        currentslide = 0;
-        nextslide = 0;
-        slidecount = 0;
-        slidechanged = true;
-        currentslideframecount = 0;
-        slidetransitionframes = 0;
-        transitionstepcount = 0;
-        transitionoffset = 1;
-        fadeout = 100;
-        fadein = 0;
-        slidetime = 0;
-        showtime = 0;
-        timerID = 0;
-        framecount = 0;
+        resetShowCounters();
         playshow();
       }
     });
@@ -406,6 +397,28 @@ function app(){
     tlblmin.innerHTML = "00";
     seconds = 0;
     minutes = 0;
+  }
+
+  function resetShowCounters(){
+    currentslide = 0;
+    nextslide = 0;
+    slidecount = 0;
+    framecount = 0;
+    seconds = 0;
+    minutes = 0;
+    slideseconds = 0;
+    slideminutes = 0;
+    secondsID = 0;
+    loadCount = 1;
+    slidechanged = true;
+    currentslideframecount = 0;
+    slidetransitionframes = 0;
+    transitionstepcount = 0;
+    transitionoffset = 1;
+    fadeout = 100;
+    fadein = 0;
+    slidetime = 0;
+    showtime = 0;
   }
 
 }
