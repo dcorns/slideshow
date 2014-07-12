@@ -142,15 +142,13 @@ function app(){
       framecount = 0;
       if (!(slideshow.loop)) {
         clearInterval(timerID);
+        clearInterval(secondsID);
         stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
         stopped = true;
-        clearInterval(timerID);
-        clearInterval(secondsID);
-        resetTimeline();
+        resetTimeLine();
+        return;
       }
-      resetTimeline();
-      resetShowCounters();
-      playshow();
+      resetTimeLine();
     }
     slidecontrol();
   }
@@ -241,11 +239,11 @@ function app(){
     makePauseBtn();
     makeStopBtn();
     makePlayBtn();
-    addElement("main", makeLabel("lblshowtimer1","showtimer1","00"));
-    addElement("main", makeLabel("lblshowtimer2","showtimer2","00"));
+    addElement("main", makeLabel("lblshowtimerMin","showtimerMin","00"));
+    addElement("main", makeLabel("lblshowtimerSec","showtimerSec","00"));
     addElement("main", makeLabel("lbldelim","delim","|"));
-    addElement("main", makeLabel("lblslidetimer1","slidetimer1","00"));
-    addElement("main", makeLabel("lblslidetimer2","slidetimer2","00"));
+    addElement("main", makeLabel("lblslidetimerMin","slidetimerMin","00"));
+    addElement("main", makeLabel("lblslidetimerSec","slidetimerSec","00"));
     addElement("main", makeLabel("lblslidetimerdelim","tdel1",":"));
     addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
 
@@ -295,9 +293,10 @@ function app(){
       if(!(stopped)) {
         stopped = true;
         clearInterval(timerID);
+        clearInterval(secondsID);
         stage.globalAlpha = 1;
         stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
-        resetTimeline();
+        resetTimeLine();
       }
     });
 
@@ -327,15 +326,15 @@ function app(){
   function incrementTimer(){
     seconds++;
     slideseconds++;
-    //determine minutes and seconds in preparation for timeline display
+    //determine minutes and seconds in preparation for time line display
     switch(seconds){
       case 60:
         minutes++;
         seconds=0;
         break;
       case 10000:
-        turnOverTime("Total");
-        return;
+        minutes = 0;
+        seconds = 0;
     }
 
     switch(slideseconds){
@@ -344,28 +343,22 @@ function app(){
         slideseconds = 0;
         break;
       case 10000:
-        turnOverTime("Slide");
-        return;
+        slideminutes = 0;
+        slideseconds = 0;
     }
     showSlideSeconds();
     showShowSeconds();
   }
 
-  function resetTimeline(){
-   resetShowTimer();
-   resetSlideTimer();
-   clearInterval(secondsID);
-  }
-
   function showSlideSeconds(){
-    var lblsec = document.getElementById("lblslidetimer2");
+    var lblsec = document.getElementById("lblslidetimerSec");
     if(slideseconds > 9){
       lblsec.innerHTML = slideseconds.toString().substr(this.length - 2);
     }
     else{
       lblsec.innerHTML = "0"+slideseconds.toString();
     }
-    var lblmin = document.getElementById("lblslidetimer1");
+    var lblmin = document.getElementById("lblslidetimerMin");
     if(slideminutes > 9){
       lblmin.innerHTML = slideminutes.toString().substr(this.length - 2);
     }
@@ -375,14 +368,14 @@ function app(){
   }
 
   function showShowSeconds(){
-    var lblsec = document.getElementById("lblshowtimer2");
+    var lblsec = document.getElementById("lblshowtimerSec");
     if(seconds > 9){
       lblsec.innerHTML = seconds.toString().substr(this.length - 2);
     }
     else{
       lblsec.innerHTML = "0"+seconds.toString();
     }
-    var lblmin = document.getElementById("lblshowtimer1");
+    var lblmin = document.getElementById("lblshowtimerMin");
     if(minutes > 9){
       lblmin.innerHTML = minutes.toString().substr(this.length - 2);
     }
@@ -390,32 +383,14 @@ function app(){
       lblmin.innerHTML = "0"+minutes.toString();
     }
   }
-
-  function turnOverTime(overtime){
-    if(overtime === "Slide"){
-      resetSlideTimer();
-    }
-    else{
-      resetShowTimer();
-    }
-  }
-
-  function resetSlideTimer(){
-    var slblsec = document.getElementById("lblslidetimer2");
-    var slblmin = document.getElementById("lblslidetimer1");
-    slblsec.innerHTML = "00";
-    slblmin.innerHTML = "00";
-    slideminutes = 0;
-    slideseconds = 0;
-  }
-
-  function resetShowTimer(){
-    var tlblsec = document.getElementById("lblshowtimer2");
-    var tlblmin = document.getElementById("lblshowtimer1");
-    tlblsec.innerHTML = "00";
-    tlblmin.innerHTML = "00";
-    seconds = 0;
+  // set time counters seconds to negative values and minutes to zero then call incrementTimer() to advance seconds to
+  // zero and call display functions
+  function resetTimeLine(){
+    seconds = -1;
     minutes = 0;
+    slideseconds = -1;
+    slideminutes = 0;
+    incrementTimer();
   }
 
   function resetShowCounters(){

@@ -12,7 +12,7 @@
     background-color: antiquewhite;
 }
 
-.slidetimer1{
+.slidetimerMin{
     position: absolute;
     top: 239px;
     left: 271px;
@@ -20,7 +20,7 @@
     background-color: black;
 }
 
-.slidetimer2{
+.slidetimerSec{
     position: absolute;
     top: 239px;
     left: 290px;
@@ -28,7 +28,7 @@
     background-color: black;
 }
 
-.showtimer1{
+.showtimerMin{
     position: absolute;
     top: 239px;
     left: 310px;
@@ -36,7 +36,7 @@
     background-color: black;
 }
 
-.showtimer2{
+.showtimerSec{
     position: absolute;
     top: 239px;
     left: 328px;

@@ -38,9 +38,19 @@ Program Explanation:
         drawframe using 1000 and slideshow.framerate respectively for interval times.
         
             327 incrementTimer() is responsible for controlling the time line.
+                Advances seconds and slideseconds every 1000ms. Advances minutes and slideminutes 60000ms and resets
+                 seconds and minutes to zero if seconds reaches 10000 and sets slideseconds and slideminutes to zero if 
+                 slideseconds reaches 10000. Then showSlideSeconds() and showShowSeconds() are called to format and 
+                 display these values to the UI.
+                 
             
             138 drawframe() is where all the slide drawing and transitions trigger.
+                Using framecount and slideshow.totalframes it determines if all the slides in the series have run and if
+                they have not it will call slidecontrol to proccess the next slide. If all the slide have run it will
+                reset framecount to zero and check slideshow.loop if loop is true it will call resetTimeLine and then
+                slidecontrol. Otherwise it will stop the intervals, set stop to true, calls resetTimeLine and returns.
                 
+                .....
         
         
            
