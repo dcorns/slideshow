@@ -13,52 +13,63 @@ function app(){
   var slideArray = [];
   var canvas = document.getElementById("show");
   var stage = canvas.getContext('2d');
-  var currentslide = 0;
-  var nextslide = 0;
-  var slidecount = 0;
-  var framecount = 0;
+// Interval timer ID's
+  var secondsID = 0;
+  var timerID = 0;
+// Timeline counters
   var seconds = 0;
   var minutes = 0;
   var slideseconds = 0;
   var slideminutes = 0;
-  var secondsID = 0;
-  var loadCount = 1;
-  var slidechanged = true;
-  var currentslideframecount = 0;
-  var slidetransitionframes = 0;
-  var transitionstepcount = 0;
-  var transitionoffset = 1;
-  var fadeout = 100;
-  var fadein = 0;
   var slidetime = 0;
   var showtime = 0;
-  var timerID = 0;
+// Image load counter
+  var loadCount = 1;
+// Standard slide and frame counters
+  var framecount = 0;
+  var currentslide = 0;
+  var nextslide = 0;
+  var slidecount = 0;
+  var currentslideframecount = 0;
+// Transition counters
+  var slidetransitionframes = 0;
+  var transitionstepcount = 0;
+  var fadeout = 100;
+  var fadein = 0;
+// Setters
+  var transitionoffset = 1;
+  var slidechanged = true;
   var paused = false;
   var stopped = false;
+
   pagecontrol();
 //*********************************************Load Data****************************************************************
   function pagecontrol() {
+    //Load the data file into showXML
     var showdata = new XMLHttpRequest();
     showdata.open("GET", "add.xml", false);
     showdata.send();
     var showXML = showdata.responseXML;
-    //populate slideshow with showXML data
+    //populate the slideshow object with showXML data
     slideshow.ad = getAd(showXML);
     slideshow.timeline = getTimeline(showXML);
     slideshow.imgs = getImages(showXML);
-    //add more settings to slideshow object
-    slideshow.transition = "crossfade";       //if transitions are added these settings should be combined into one object as part of a transition array
+    //add more settings to slideshow object that were not included in the data file
+    //added the transition objects for future implementation of multiple transition options
+    //if transitions are added these settings should be combined into one object as part of a transition array
+    slideshow.transition = "crossfade";
     slideshow.transsteps = 100; //How many states the transition goes through total
-    slideshow.transratio = .2; //percent in decimal of two slide's frames used by the transition
-    slideshow.timeline.pos = {"x": 0, "y": 0};
-    slideshow.framerate = 40; //frames per slide (not really a frame rate
-    slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate);
-    slideshow.loop = true;
+    slideshow.transratio = .2; //percent in decimal of the slide frames to be shared by the slides used by the transition
+    slideshow.timeline.pos = {"x": 0, "y": 0}; //storing the coordinates of the time line display (will probably remove)
+    slideshow.framerate = 40; //bad name it is actually the number of milliseconds between stage refreshes
+    slideshow.totalframes = Math.round(slideshow.timeline.duration/slideshow.framerate); //total frames in the show
+    slideshow.loop = true; //if true, the slide show will repeat until stop is selected
 //************************************************Slide Show Calls******************************************************
     buildShow();
     makeElements();
   }
 //************************************************Data Load Functions***************************************************
+  //Create the slideshow.Ad
   function getAd(xmldoc) {
     var adver = xmldoc.getElementsByTagName("ad");
     var asize = adver[0].getAttribute("size");
@@ -67,13 +78,13 @@ function app(){
     var abackground = adver[0].getAttribute("background");
     return {"background": abackground, "size": {"x": xsize, "y": ysize}};
   }
-
+  //Create slideshow.timeline
   function getTimeline(xmldoc) {
     var tl = xmldoc.getElementsByTagName("timeline");
     var duration = tl[0].getAttribute("duration");
     return {"duration": duration};
   }
-
+  //Create slideshow.imgs
   function getImages(xmldoc) {
     var result = [];
     var imgs = xmldoc.getElementsByTagName("image");
@@ -90,6 +101,7 @@ function app(){
     return result;
   }
 //**********************************************Setup Canvas And Images*************************************************
+  //get settings from slideshow and create the slideArray which contains all the image nodes for the show
   function buildShow() {
     canvas.width = slideshow.ad.size.x;
     canvas.height = slideshow.ad.size.y;
@@ -103,6 +115,7 @@ function app(){
     }
   }
 //##################################################Starting Point######################################################
+  //called after each image is loaded and when all images are loaded, starts the show
   function imagesloaded() {
     if (slideArray.length === loadCount) {
       slidecount = slideArray.length;
@@ -120,10 +133,7 @@ function app(){
     secondsID = setInterval(incrementTimer, 1000);
     timerID = setInterval(drawframe, slideshow.framerate);
   }
-//All other slides drawn here
-  function drawslide(sliderank) {
-    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x + 14, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
-  }
+
 //Frame and drawing control
   function drawframe(){
 // console.log("120 framecount: "+framecount);
@@ -173,6 +183,12 @@ function app(){
       currentslide = nextslide;
     }
   }
+
+//All slides except the first (playshow()) drawn here
+  function drawslide(sliderank) {
+    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x + 14, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
+  }
+
 //Structured for the addition of multiple transition choices
   function transitions(){
     var transitionoffset = slideshow.transsteps / (slidetransitionframes * 2) ;
@@ -219,6 +235,22 @@ function app(){
   }
 
 //****************************************************UI Elements and Logic*********************************************
+
+
+  function makeElements(){
+    makePauseBtn();
+    makeStopBtn();
+    makePlayBtn();
+    addElement("main", makeLabel("lblshowtimer1","showtimer1","00"));
+    addElement("main", makeLabel("lblshowtimer2","showtimer2","00"));
+    addElement("main", makeLabel("lbldelim","delim","|"));
+    addElement("main", makeLabel("lblslidetimer1","slidetimer1","00"));
+    addElement("main", makeLabel("lblslidetimer2","slidetimer2","00"));
+    addElement("main", makeLabel("lblslidetimerdelim","tdel1",":"));
+    addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
+
+  }
+
   function makeButton(id, cls, txt, clk){
     var btn = document.createElement("button");
     btn.className = cls;
@@ -239,19 +271,6 @@ function app(){
     return lbl;
   }
 
-  function makeElements(){
-    makePauseBtn();
-    makeStopBtn();
-    makePlayBtn();
-    addElement("main", makeLabel("lblshowtimer1","showtimer1","00"));
-    addElement("main", makeLabel("lblshowtimer2","showtimer2","00"));
-    addElement("main", makeLabel("lbldelim","delim","|"));
-    addElement("main", makeLabel("lblslidetimer1","slidetimer1","00"));
-    addElement("main", makeLabel("lblslidetimer2","slidetimer2","00"));
-    addElement("main", makeLabel("lblslidetimerdelim","tdel1",":"));
-    addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
-
-  }
 
   function makePauseBtn(){
     var btnpause = makeButton("btnpause","pause", "", function (){
