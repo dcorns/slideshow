@@ -41,7 +41,6 @@ function app(){
   var slidechanged = true;
   var paused = false;
   var stopped = false;
-  var firstslide = true;
   pagecontrol();
 //*********************************************Load Data****************************************************************
   function pagecontrol() {
@@ -135,7 +134,6 @@ function app(){
 
 //Determines when to end the show
   function drawframe(){
-
     if(framecount > slideshow.totalframes){
       framecount = 0;
       if (!(slideshow.loop)) {
@@ -167,7 +165,6 @@ function app(){
     else{
       drawslide(currentslide);
     }
-
     currentslideframecount--;
     if(currentslideframecount < 1){
       slidechanged = true;
@@ -179,7 +176,7 @@ function app(){
 
 //All slides except the first (playshow()) drawn here
   function drawslide(sliderank) {
-    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x + 14, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
+    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
   }
 
 //Structured for the addition of multiple transition choices
@@ -245,6 +242,16 @@ function app(){
     makePauseBtn();
     makeStopBtn();
     makePlayBtn();
+    addElement("main", makeButton("btnloop","loop","L",function(){
+      if(slideshow.loop){
+        slideshow.loop = false;
+        document.getElementById("btnloop").className = "loop";
+      }
+      else{
+        slideshow.loop = true;
+        document.getElementById("btnloop").className = "loopon";
+      }
+    }));
     addElement("main", makeLabel("lblshowtimerMin","showtimerMin","00"));
     addElement("main", makeLabel("lblshowtimerSec","showtimerSec","00"));
     addElement("main", makeLabel("lbldelim","delim","|"));

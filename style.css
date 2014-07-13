@@ -7,7 +7,7 @@
 .delim{
     position: absolute;
     top: 239px;
-    left: 307px;
+    left: 319px;
     color: white;
     background-color: antiquewhite;
 }
@@ -15,7 +15,7 @@
 .slidetimerMin{
     position: absolute;
     top: 239px;
-    left: 271px;
+    left: 283px;
     color: lawngreen;
     background-color: black;
 }
@@ -23,7 +23,7 @@
 .slidetimerSec{
     position: absolute;
     top: 239px;
-    left: 290px;
+    left: 302px;
     color: lawngreen;
     background-color: black;
 }
@@ -31,7 +31,7 @@
 .showtimerMin{
     position: absolute;
     top: 239px;
-    left: 310px;
+    left: 322px;
     color: greenyellow;
     background-color: black;
 }
@@ -39,7 +39,7 @@
 .showtimerSec{
     position: absolute;
     top: 239px;
-    left: 328px;
+    left: 340px;
     color: greenyellow;
     background-color: black;
 }
@@ -47,7 +47,7 @@
 .tdel1{
     position: absolute;
     top: 239px;
-    left: 326px;
+    left: 338px;
     color: greenyellow;
     background-color: black;
 }
@@ -55,7 +55,7 @@
 .tdel2{
     position: absolute;
     top: 239px;
-    left: 287px;
+    left: 299px;
     color: greenyellow;
     background-color: black;
 }
@@ -95,11 +95,23 @@
 }
 
 .loop{
+    position: absolute;
+    top: 214px;
+    left: 330px;
     background-color: cadetblue;
-    color:darkblue;
+    color: darkblue;
+    width: 25px;
+    height: 25px;
 }
 
 .loopon{
+    position: absolute;
+    top: 214px;
+    left: 330px;
     background-color: blue;
-    color:deepskyblue;
+    color: darkblue;
+    width: 25px;
+    height: 25px;
+    border-color:deepskyblue;
+    border-width: 4px;
 }
