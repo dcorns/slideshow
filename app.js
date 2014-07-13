@@ -328,6 +328,7 @@ function app(){
     var btnstop = makeButton("btnstop", "stop", "", function (){
       if(!(stopped)) {
         stopped = true;
+        clearPause();
         clearInterval(timerID);
         clearInterval(secondsID);
         stage.globalAlpha = 1;
@@ -343,7 +344,6 @@ function app(){
     var btnplay = makeButton("btnplay", "play", "", function (){
       if(stopped) {
         stopped = false;
-        paused = false;
         resetShowCounters();
         playshow();
       }
@@ -355,6 +355,11 @@ function app(){
   function addElement(pelem, elemtoadd){
     var elem = document.getElementById(pelem);
     elem.appendChild(elemtoadd);
+  }
+
+  function clearPause(){
+    paused = false;
+    document.getElementById("btnpause").className = "pause";
   }
 
 //********************************************Time Line Control And UI**************************************************
