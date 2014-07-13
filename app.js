@@ -41,7 +41,7 @@ function app(){
   var slidechanged = true;
   var paused = false;
   var stopped = false;
-
+  var firstslide = true;
   pagecontrol();
 //*********************************************Load Data****************************************************************
   function pagecontrol() {
@@ -53,7 +53,7 @@ function app(){
     //populate the slideshow object with showXML data and add other objects not currently provided by XML
     //added the transition objects for future implementation of multiple transition options
     //if transitions are added these settings should be combined into one object as part of a transition array
-    slideshow.transition = "crossfade";
+    slideshow.transition = "fade";
     slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of the slide frames to be shared by the slides used by the transition
     slideshow.framerate = 40; //bad name it is actually the number of milliseconds between stage refreshes
@@ -129,20 +129,19 @@ function app(){
 //added 14 to the x provided by the the xml to center the images since they are slightly smaller than the canvas.
   //Needs to be factored in if common
   function playshow() {
-    stage.drawImage(slideArray[currentslide], slideArray[currentslide].x + 14, slideArray[currentslide].y,  slideArray[currentslide].width,slideArray[currentslide].height);
     secondsID = setInterval(incrementTimer, 1000);
     timerID = setInterval(drawframe, slideshow.framerate);
   }
 
 //Determines when to end the show
   function drawframe(){
-// console.log("120 framecount: "+framecount);
-    framecount++;
+
     if(framecount > slideshow.totalframes){
       framecount = 0;
       if (!(slideshow.loop)) {
         clearInterval(timerID);
         clearInterval(secondsID);
+        stage.globalAlpha = 1;
         stage.fillRect(0, 0, slideshow.ad.size.x, slideshow.ad.size.y);
         stopped = true;
         resetTimeLine();
@@ -151,6 +150,7 @@ function app(){
       resetTimeLine();
     }
     slidecontrol();
+    framecount++;
   }
 //Determine when to change slides and when to call transitions
   function slidecontrol(){
@@ -160,7 +160,6 @@ function app(){
       var nextslideframecount = slideshow.imgs[nextslide].framecount;
       slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.transratio));
       slidechanged = false;
-      console.log("157 currenslideframecount: "+currentslideframecount);
     }
     if(currentslideframecount <= slidetransitionframes || (currentslideframecount > (currentslideframecount - slidetransitionframes))){
       drawslide(transitions());
@@ -168,12 +167,10 @@ function app(){
     else{
       drawslide(currentslide);
     }
-    //Slide duration is a countdown
-//    console.log("164 currentslideframecount:"+currentslideframecount);
+
     currentslideframecount--;
     if(currentslideframecount < 1){
       slidechanged = true;
-      //reset slideseconds
       slideseconds = 0;
       transitionstepcount = 0;
       currentslide = nextslide;
@@ -187,14 +184,14 @@ function app(){
 
 //Structured for the addition of multiple transition choices
   function transitions(){
-    var transitionoffset = slideshow.transsteps / (slidetransitionframes) ;
+    var transitionoffset = slideshow.transsteps / slidetransitionframes ;
     transitionstepcount++;
+    if(transitionstepcount === 1){
+      fadein = 0; fadeout = 100;
+    }
       switch (slideshow.transition) {
         //draw current slide with reduced alpha, then draw next slide with increased alpha
-        case "crossfade":
-          if(transitionstepcount === 1){
-            fadein = 0; fadeout = 100;
-          }
+        case "lightning":
           if (transitionstepcount % 100) {
             fadein = fadein + transitionoffset;
             if (fadein > 100) {
@@ -215,6 +212,17 @@ function app(){
             }
             return currentslide;
           }
+          break;
+
+        case "fade":
+          fadein++;
+          if (fadein > 100) {
+            stage.globalAlpha = 1;
+          }
+          else {
+            stage.globalAlpha = fadein * .01;
+          }
+          return nextslide;
 
           break;
       }

@@ -51,9 +51,14 @@ Program Explanation:
                 slidecontrol. Otherwise it will stop the intervals, set stop to true, calls resetTimeLine and returns.
                 
                     156 slidecontrol() controls how the slides will be displayed
-                    Sets the currentframecount to the current slide's frame count, calls setnextslide() which sets
-                    nextslide to one more than currentslide or to the first slide in the show (zero). Then nextslide's
-                    framecount is loaded into nextslideframecount
+                    If the slidechanged flag is set the currentframecount is set to current slide's frame count, 
+                    setnextslide() is called which sets nextslide to one more than currentslide or to the first slide in
+                    the show (zero). Then nextslide's framecount is loaded into nextslideframecount, transitionframe are
+                    calculated based on the slide frame counts and slidechanged is set to false.
+                    Then currentframecount is checked against transition frames to see if transition frames need to run
+                    and if so transitions() is sent to drawslide(). If not then currentslide is sent to drawslide()
+                    Then currentslide is decremented and afterwards tested for less than zero and if so replaced with
+                    nextslide value, slidechange flag is set and slideseconds, transitionstepcount are set to zero.
         
         
            
