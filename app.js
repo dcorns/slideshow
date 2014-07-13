@@ -308,10 +308,12 @@ function app(){
     var btnpause = makeButton("btnpause","pause", "", function (){
       if(!(stopped)) {
         if (paused) {
+          document.getElementById("btnpause").className = "pause";
           paused = false;
           playshow();
         }
         else {
+          document.getElementById("btnpause").className = "pauseOn";
           clearInterval(timerID);
           clearInterval(secondsID);
           paused = true;

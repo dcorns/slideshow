@@ -102,6 +102,17 @@
     color: black;
 }
 
+.pauseOn{
+    height: 10px;
+    width: 40px;
+    position: absolute;
+    top: 247px;
+    left: 48px;
+    border-color: goldenrod;
+    background-color: yellowgreen;
+    color: black;
+}
+
 .loop{
     position: absolute;
     top: 214px;
