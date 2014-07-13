@@ -243,7 +243,6 @@ function app(){
     makeStopBtn();
     makePlayBtn();
     makeLoopBtn();
-
     addElement("main", makeLabel("lblshowtimerMin","showtimerMin","00"));
     addElement("main", makeLabel("lblshowtimerSec","showtimerSec","00"));
     addElement("main", makeLabel("lbldelim","delim","|"));
@@ -251,7 +250,7 @@ function app(){
     addElement("main", makeLabel("lblslidetimerSec","slidetimerSec","00"));
     addElement("main", makeLabel("lblslidetimerdelim","tdel1",":"));
     addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
-
+    addElement("main", makeSelect("seltransition","seltransition"));
   }
 
   function makeButton(id, cls, txt, clk){
@@ -272,6 +271,24 @@ function app(){
     lbl.appendChild(txtnode);
     lbl.id = id;
     return lbl;
+  }
+
+  function makeSelect(id, cls){
+    var sel = document.createElement("select");
+    var opt1 = document.createElement("option");
+    var txtnode1 = document.createTextNode("fade");
+    opt1.appendChild(txtnode1);
+    var opt2 = document.createElement("option");
+    var txtnode2 = document.createTextNode("lightning");
+    opt2.appendChild(txtnode2);
+    sel.className = cls;
+    sel.id = id;
+    sel.appendChild(opt1);
+    sel.appendChild(opt2);
+    sel.onchange = function(){
+      slideshow.transition = document.getElementById("seltransition").value;
+    };
+    return sel;
   }
 
   function makeLoopBtn(){

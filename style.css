@@ -83,6 +83,14 @@
     color: black;
 }
 
+.seltransition{
+    position: absolute;
+    height: 10px;
+    width: 40px;
+    top: 247px;
+    left: 120px;
+}
+
 .pause{
     height: 10px;
     width: 40px;
