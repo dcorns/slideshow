@@ -189,7 +189,7 @@ function app(){
       switch (slideshow.transition) {
         //draw current slide with reduced alpha, then draw next slide with increased alpha
         case "lightning":
-          if (transitionstepcount % 100) {
+          if (transitionstepcount % 2) {
             fadein = fadein + transitionoffset;
             if (fadein > 100) {
               stage.globalAlpha = 1;
@@ -242,16 +242,8 @@ function app(){
     makePauseBtn();
     makeStopBtn();
     makePlayBtn();
-    addElement("main", makeButton("btnloop","loop","L",function(){
-      if(slideshow.loop){
-        slideshow.loop = false;
-        document.getElementById("btnloop").className = "loop";
-      }
-      else{
-        slideshow.loop = true;
-        document.getElementById("btnloop").className = "loopon";
-      }
-    }));
+    makeLoopBtn();
+
     addElement("main", makeLabel("lblshowtimerMin","showtimerMin","00"));
     addElement("main", makeLabel("lblshowtimerSec","showtimerSec","00"));
     addElement("main", makeLabel("lbldelim","delim","|"));
@@ -282,6 +274,18 @@ function app(){
     return lbl;
   }
 
+  function makeLoopBtn(){
+    addElement("main", makeButton("btnloop","loop","L",function(){
+      if(slideshow.loop){
+        slideshow.loop = false;
+        document.getElementById("btnloop").className = "loop";
+      }
+      else{
+        slideshow.loop = true;
+        document.getElementById("btnloop").className = "loopon";
+      }
+    }));
+  }
 
   function makePauseBtn(){
     var btnpause = makeButton("btnpause","pause", "", function (){
