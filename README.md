@@ -60,6 +60,11 @@ Program Explanation:
                     Then currentslide is decremented and afterwards tested for less than zero and if so replaced with
                     nextslide value, slidechange flag is set and slideseconds, transitionstepcount are set to zero.
         
+            183 transitions()
+                transitionoffset is the ratio of the required steps for a transition to complete to the number of
+                transition frames.
+                The transitionstepcount is checked for the value of one to reset any variable trackers for a given
+                transition that require it at the start of transitions
         
            
         
