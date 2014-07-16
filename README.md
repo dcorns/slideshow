@@ -61,10 +61,12 @@ Program Explanation:
                     nextslide value, slidechange flag is set and slideseconds, transitionstepcount are set to zero.
         
             183 transitions()
+                slideshow.transsteps-the number of steps required for a transition to complete (57)
+                slideshow.transratio-percent in decimal of slide frames to use for a transition (58)
                 transitionoffset is the ratio of the required steps for a transition to complete to the number of
                 transition frames.
-                The transitionstepcount is checked for the value of one to reset any variable trackers for a given
-                transition that require it at the start of transitions
+                The transitionstepcount is checked against the value of transitionoffset to reset transitions specific 
+                variables.
         
            
         

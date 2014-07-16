@@ -31,7 +31,8 @@ function app(){
   var nextslide = 0;
   var slidecount = 0;
   var currentslideframecount = 0;
-// Transition counters
+// Transition variables
+  var transtoggle = true;
   var slidetransitionframes = 0;
   var transitionstepcount = 0;
   var fadeout = 100;
@@ -53,6 +54,7 @@ function app(){
     //added the transition objects for future implementation of multiple transition options
     //if transitions are added these settings should be combined into one object as part of a transition array
     slideshow.transition = "fade";
+    slideshow.transslidecount = 1; //Number of slides participating in the transition
     slideshow.transsteps = 100; //How many states the transition goes through total
     slideshow.transratio = .2; //percent in decimal of the slide frames to be shared by the slides used by the transition
     slideshow.framerate = 40; //bad name it is actually the number of milliseconds between stage refreshes
@@ -156,14 +158,27 @@ function app(){
       currentslideframecount = slideshow.imgs[currentslide].framecount;
       setnextslide();
       var nextslideframecount = slideshow.imgs[nextslide].framecount;
+      //calculate transition frames with current frame and next frame combined to account for unequal durations
       slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.transratio));
+      transitionoffset = slideshow.transsteps / slidetransitionframes;
       slidechanged = false;
     }
-    if(currentslideframecount <= slidetransitionframes || (currentslideframecount > (currentslideframecount - slidetransitionframes))){
-      drawslide(transitions());
+    if(slideshow.transslidecount = 2) {
+      //split transition frames between start and end of slides
+      if (currentslideframecount <= slidetransitionframes / 2 || currentslideframecount >= slideshow.imgs[currentslide].framecount - slidetransitionframes / 2) {
+        drawslide(transitions());
+      }
+      else {
+        drawslide(currentslide);
+      }
     }
     else{
-      drawslide(currentslide);
+      if(currentslideframecount >= slideshow.imgs[currentslide].framecount - slidetransitionframes){
+        drawslide(transitions());
+      }
+      else{
+        drawslide(currentslide);
+      }
     }
     currentslideframecount--;
     if(currentslideframecount < 1){
@@ -176,43 +191,45 @@ function app(){
 
 //All slides except the first (playshow()) drawn here
   function drawslide(sliderank) {
-    stage.drawImage(slideArray[sliderank], slideArray[currentslide].x, slideArray[currentslide].y, slideArray[currentslide].width,slideArray[currentslide].height);
+    stage.drawImage(slideArray[sliderank], slideArray[sliderank].x, slideArray[sliderank].y, slideArray[sliderank].width,slideArray[sliderank].height);
   }
 
 //Structured for the addition of multiple transition choices
   function transitions(){
-    var transitionoffset = slideshow.transsteps / slidetransitionframes ;
-    transitionstepcount++;
-    if(transitionstepcount === 1){
+    console.log(transitionstepcount);
+    transitionstepcount += transitionoffset;
+    if(transitionstepcount === transitionoffset){
       fadein = 0; fadeout = 100;
     }
       switch (slideshow.transition) {
         //draw current slide with reduced alpha, then draw next slide with increased alpha
         case "lightning":
-          if (transitionstepcount % 2) {
-            fadein = fadein + transitionoffset;
+          if (transtoggle) {
+            fadein += transitionoffset;
             if (fadein > 100) {
               stage.globalAlpha = 1;
             }
             else {
               stage.globalAlpha = fadein * .01;
             }
+            transtoggle = false;
             return nextslide;
           }
           else {
-            fadeout = fadeout - transitionoffset;
+            fadeout -= transitionoffset;
             if (fadeout < 0) {
               stage.globalAlpha = 0;
             }
             else {
-              stage.globalAlpha = fadeout * .2;
+              stage.globalAlpha = fadeout * .01;
             }
+            transtoggle = true;
             return currentslide;
           }
           break;
 
         case "fade":
-          fadein++;
+            fadein+=(transitionoffset);
           if (fadein > 100) {
             stage.globalAlpha = 1;
           }
@@ -223,7 +240,7 @@ function app(){
 
           break;
       }
-
+    console.log(fadein+','+fadeout);
   }
 
   function setnextslide(){
@@ -252,6 +269,7 @@ function app(){
     addElement("main", makeLabel("lblshowtimerdelim","tdel2",":"));
     addElement("main", makeSelect("seltransition","seltransition"));
   }
+
 
   function makeButton(id, cls, txt, clk){
     var btn = document.createElement("button");
