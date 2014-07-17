@@ -51,12 +51,8 @@ function app(){
     showdata.send();
     var showXML = showdata.responseXML;
     //populate the slideshow object with showXML data and add other objects not currently provided by XML
-    //added the transition objects for future implementation of multiple transition options
-    //if transitions are added these settings should be combined into one object as part of a transition array
-    slideshow.transition = "fade";
-    slideshow.transslidecount = 1; //Number of slides participating in the transition
-    slideshow.transsteps = 100; //How many states the transition goes through total
-    slideshow.transratio = .2; //percent in decimal of the slide frames to be shared by the slides used by the transition
+    getTransitions();
+    slideshow.currentTransition = slideshow.transitions.fade; //assigned here since not in XML
     slideshow.framerate = 40; //bad name it is actually the number of milliseconds between stage refreshes
     slideshow.loop = false; //if true, the slide show will repeat until stop is selected
     slideshow.ad = getAd(showXML);
@@ -100,6 +96,15 @@ function app(){
       result[c].framecount = Math.round(result[c].endTime/slideshow.framerate);
     }
     return result;
+  }
+  //Create Transition Data (note, not currently provided by the XML
+  function getTransitions(){
+    //slidecount in the number of slides participating in the transition
+    //steps is how many states the transition goes through total
+    //frameratio is the percent in decimal of the slide frames to be shared by the slides used by the transition
+    slideshow.transitions = {};
+    slideshow.transitions.fade = {name : "fade", slidecount : 1, steps : 100, frameratio :.5};
+    slideshow.transitions.lightning = {name : "lightning", slidecount : 2, steps : 100, frameratio :.2};
   }
 //**********************************************Setup Canvas And Images*************************************************
   //get settings from slideshow and create the slideArray which contains all the image nodes for the show
@@ -159,11 +164,11 @@ function app(){
       setnextslide();
       var nextslideframecount = slideshow.imgs[nextslide].framecount;
       //calculate transition frames with current frame and next frame combined to account for unequal durations
-      slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.transratio));
-      transitionoffset = slideshow.transsteps / slidetransitionframes;
+      slidetransitionframes = Math.round(((currentslideframecount + nextslideframecount) * slideshow.currentTransition.frameratio));
+      transitionoffset = slideshow.currentTransition.steps / slidetransitionframes;
       slidechanged = false;
     }
-    if(slideshow.transslidecount = 2) {
+    if(slideshow.currentTransition.slidecount = 2) {
       //split transition frames between start and end of slides
       if (currentslideframecount <= slidetransitionframes / 2 || currentslideframecount >= slideshow.imgs[currentslide].framecount - slidetransitionframes / 2) {
         drawslide(transitions());
@@ -196,12 +201,11 @@ function app(){
 
 //Structured for the addition of multiple transition choices
   function transitions(){
-    console.log(transitionstepcount);
     transitionstepcount += transitionoffset;
     if(transitionstepcount === transitionoffset){
       fadein = 0; fadeout = 100;
     }
-      switch (slideshow.transition) {
+      switch (slideshow.currentTransition.name) {
         //draw current slide with reduced alpha, then draw next slide with increased alpha
         case "lightning":
           if (transtoggle) {
@@ -240,7 +244,6 @@ function app(){
 
           break;
       }
-    console.log(fadein+','+fadeout);
   }
 
   function setnextslide(){
@@ -293,18 +296,27 @@ function app(){
 
   function makeSelect(id, cls){
     var sel = document.createElement("select");
-    var opt1 = document.createElement("option");
-    var txtnode1 = document.createTextNode("fade");
-    opt1.appendChild(txtnode1);
-    var opt2 = document.createElement("option");
-    var txtnode2 = document.createTextNode("lightning");
-    opt2.appendChild(txtnode2);
+    for ( var prop in slideshow.transitions){
+      if (slideshow.transitions.hasOwnProperty(prop)){
+        var opt = document.createElement("option");
+        var txtnode = document.createTextNode(slideshow.transitions[prop].name);
+        opt.appendChild(txtnode);
+        sel.appendChild(opt);
+      }
+    }
+
     sel.className = cls;
     sel.id = id;
-    sel.appendChild(opt1);
-    sel.appendChild(opt2);
+
     sel.onchange = function(){
-      slideshow.transition = document.getElementById("seltransition").value;
+      var transSel = document.getElementById("seltransition").value;
+        for ( var prop in slideshow.transitions){
+          if (slideshow.transitions.hasOwnProperty(prop)){
+            if (transSel === prop){
+              slideshow.currentTransition = slideshow.transitions[prop];
+            }
+          }
+        }
     };
     return sel;
   }
